@@ -193,3 +193,27 @@ button:disabled {
     margin-right: 0px;
   }
 }
+
+select {
+    height: 39px;
+}
+
+.input-separator {
+    text-align: center;
+}
+
+.form-field.room-input-field {
+    opacity: 0.4;
+}
+
+.form-field.room-input-field.active {
+    opacity: 1;
+}
+
+.error label {
+    color: red;
+}
+.error input, .error select {
+    border: 1px solid red;
+    background-color: #fee;
+}

@@ -1,8 +1,4 @@
-[{
-    id: 'jf2ioefjaisdjf',
-    name: 'Erik',
-    room: 'Colony Fans'
-}]
+var _ = require('lodash');
 
 class Users {
     constructor () {
@@ -30,6 +26,14 @@ class Users {
         var namesArray = users.map((user) => user.name);
 
         return namesArray;
+    }
+    getActiveRoomsList() {
+        var roomsList = [];
+        this.users.forEach((user) => {
+            roomsList.push(user.room);
+        });
+        roomsList = _.sortedUniq(roomsList.sort());
+        return roomsList;
     }
 }
 

@@ -10,23 +10,37 @@
 
 <body class="centered-form">
     <div class="centered-form__form">
-        <form action="/chat.html">
+        <form id="join-form" action="/chat.html">
             <div class="form-field">
                 <h3>Join a Chat</h3>
             </div>
-            <div class="form-field">
+            <div class="form-field name-input-field">
                 <label>Display name</label>
-                <input type="text" name="name" autofocus/>
+                <input type="text" id="name" name="name" autofocus autocomplete="off"/>
             </div>
-            <div class="form-field">
-                <label>Room name</label>
-                <input type="text" name="room" />
+            <div class="form-field room-input-field active">
+                <label>Choose existing room</label>
+                <select id="existing-rooms" name="existing-rooms" class="room-input">
+                    <!-- options to be populated by JS -->
+                </select>
+            </div>
+            <div class="input-separator">
+                <p>- OR -</p>
+            </div>
+            <div class="form-field room-input-field">
+                <label>Create new room</label>
+                <input type="text" id="room" name="room" class="room-input" placeholder="Room name"/>
             </div>
             <div class="form-field">
                 <button>Join</button>
             </div>
         </form>
     </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/libs/jquery-3.1.1.js"></script>
+    <script src="/js/index.js"></script>
+
 </body>
 
 </html>
