@@ -44,22 +44,3 @@ class Users {
 }
 
 module.exports = {Users};
-
-// addUser(id, name, room)
-// removeUser(id)
-// getUser(id)
-// getUserList(room)
-
-// class Person {
-//     constructor (name, age) {
-//         this.name = name;
-//         this.age = age;
-//     }
-//     getUserDescription () {
-//         return `${this.name} is ${this.age} years old.`;
-//     }
-// }
-//
-// var me = new Person('Erik', 137);
-// var description = me.getUserDescription();
-// console.log(description);

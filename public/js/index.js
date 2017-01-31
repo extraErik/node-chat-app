@@ -3,14 +3,6 @@
     var socket = io();
     var existingRooms = jQuery('#existing-rooms');
 
-    // socket.on('connect', function () {
-    //     console.log('CONNECT on index page');
-    // });
-    //
-    // socket.on('disconnect', function () {
-    //     console.log('DISCONNECT on index page');
-    // });
-
     socket.on('updateActiveRoomsList', function (rooms) {
         // console.log('Received event updateActiveRoomsList', rooms);
         existingRooms.empty();
@@ -56,10 +48,8 @@
         var roomTextInputVal = roomTextInput.val().trim();
         if (roomTextInputVal.length > 0) {
             setActiveRoomInput('text');
-            // console.log('room input is ', roomTextInputVal);
         } else {
             setActiveRoomInput('select');
-            // console.log('room input is empty');
         }
     });
 
@@ -69,6 +59,7 @@
 
         var name = joinForm.find('#name').val().trim();
         var room = joinForm.find('.room-input-field.active > .room-input').val().trim();
+        room = _.startCase(room);
 
         var nameInputField = jQuery('.name-input-field');
         var roomInputFields = jQuery('.room-input-field');
