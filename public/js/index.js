@@ -4,7 +4,7 @@
     var existingRooms = jQuery('#existing-rooms');
 
     socket.on('updateActiveRoomsList', function (rooms) {
-        // console.log('Received event updateActiveRoomsList', rooms);
+
         existingRooms.empty();
 
         var roomSelectInput = jQuery('#existing-rooms');
@@ -21,35 +21,49 @@
         }
     });
 
-    function setActiveRoomInput(inputType) {
-        var roomTextInput = jQuery('#room');
-        var roomSelectInput = jQuery('#existing-rooms');
-        if (inputType === 'text') {
-            roomTextInput.closest('.form-field').addClass('active');
-            roomSelectInput.closest('.form-field').removeClass('active');
-        } else if (inputType === 'select') {
-            roomTextInput.closest('.form-field').removeClass('active');
-            roomSelectInput.closest('.form-field').addClass('active');
+    function clearRoomSelect(flag) {
+        if (flag) {
+            jQuery('#existing-rooms').val('');
+            jQuery('#existing-rooms').closest('.form-field').addClass('gray-out');
         } else {
-            console.log('ERROR: unknown inputType ' + inputType + 'in function setActiveRoomInput');
+            jQuery('#existing-rooms').closest('.form-field').removeClass('gray-out');
         }
-    }
+    };
+
+    function clearRoomInput(flag) {
+        if (flag) {
+            jQuery('#room').val('');
+            jQuery('#room').closest('.form-field').addClass('gray-out');
+        } else {
+            jQuery('#room').closest('.form-field').removeClass('gray-out');
+        }
+    };
 
     var roomSelectInput = jQuery("#existing-rooms");
     roomSelectInput.on('focus', function(event) {
-        setActiveRoomInput('select');
+        clearRoomSelect(false);
+    });
+    roomSelectInput.on('change', function(event) {
+        clearRoomInput(true);
     });
 
     var roomTextInput = jQuery("#room");
-    // roomTextInput.on('focus', function(event) {
-    //     setActiveRoomInput('text');
-    // });
+    roomTextInput.on('focus', function(event) {
+        clearRoomInput(false);
+    });
     roomTextInput.on('keyup', function(event) {
         var roomTextInputVal = roomTextInput.val().trim();
         if (roomTextInputVal.length > 0) {
-            setActiveRoomInput('text');
+            clearRoomSelect(true);
+            clearRoomInput(false);
         } else {
-            setActiveRoomInput('select');
+            clearRoomSelect(false);
+        }
+    });
+    roomTextInput.on('blur', function(event) {
+        var roomTextInputVal = roomTextInput.val().trim();
+        if (roomTextInputVal.length == 0) {
+            clearRoomInput(true);
         }
     });
 
@@ -58,7 +72,12 @@
         event.preventDefault();
 
         var name = joinForm.find('#name').val().trim();
-        var room = joinForm.find('.room-input-field.active > .room-input').val().trim();
+        var room;
+
+        var selectedRoom = joinForm.find('.room-input-field select').val().trim();
+        var newRoom = joinForm.find('.room-input-field input').val().trim();
+
+        room = newRoom ? newRoom : selectedRoom;
         room = _.startCase(room);
 
         var nameInputField = jQuery('.name-input-field');
@@ -69,7 +88,7 @@
         if (!name || !room) {
             if (!room) {
                 roomInputFields.addClass('error');
-                joinForm.find('.room-input-field.active > .room-input').focus();
+                joinForm.find('.room-input-field input').focus();
             }
             if (!name) {
                 nameInputField.addClass('error');

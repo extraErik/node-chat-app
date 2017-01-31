@@ -209,20 +209,22 @@ button:disabled {
   }
 }
 
+
+
 select {
     height: 39px;
+}
+
+select:disabled {
+    cursor: not-allowed;
 }
 
 .input-separator {
     text-align: center;
 }
 
-.form-field.room-input-field {
-    opacity: 0.4;
-}
-
-.form-field.room-input-field.active {
-    opacity: 1;
+.form-field.gray-out {
+    opacity: 0.3;
 }
 
 .error label {
