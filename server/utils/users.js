@@ -21,9 +21,15 @@ class Users {
     getUser (id) {
         return this.users.filter((user) => user.id === id)[0];
     }
-    getUserList (room) {
+    getUserList (room, thisUserName) {
         var users = this.users.filter((user) => user.room === room);
         var namesArray = users.map((user) => user.name);
+        namesArray.sort();
+
+        if (thisUserName) {
+            _.pull(namesArray, thisUserName);
+            namesArray.unshift(thisUserName);
+        }
 
         return namesArray;
     }

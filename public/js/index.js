@@ -78,7 +78,7 @@
         if (!name || !room) {
             if (!room) {
                 roomInputFields.addClass('error');
-                joinForm.find('.room-input-field.active > .room-input');
+                joinForm.find('.room-input-field.active > .room-input').focus();
             }
             if (!name) {
                 nameInputField.addClass('error');
