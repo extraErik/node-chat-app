@@ -59,6 +59,8 @@ socket.on('newMessage', function (message) {
 
     jQuery('#messages').append(html);
     scrollToBottom();
+
+    highlightUser(message.from);
 });
 
 socket.on('newLocationMessage', function (message) {
@@ -78,6 +80,11 @@ socket.on('typingNotifyAll', function (message) {
     setTypingIndicator(message.name, message.show);
 });
 
+function highlightUser(name) {
+    var userToHighlight = jQuery('#users li[data-name=' + name +']');
+     userToHighlight.effect("highlight", {}, 2000);
+};
+
 function setTypingIndicator(name, onFlag) {
     var userTypingImg = jQuery('#users li[data-name=' + name +'] img');
     if (onFlag) {
@@ -85,7 +92,7 @@ function setTypingIndicator(name, onFlag) {
     } else {
         userTypingImg.css('visibility', 'hidden');
     }
-}
+};
 
 var messageInput = jQuery('#message-input');
 var messagePresent, messagePresentLast, messagePresenceChanged;
