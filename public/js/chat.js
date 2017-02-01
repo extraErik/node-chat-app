@@ -37,6 +37,11 @@ socket.on('disconnect', function () {
 
 socket.on('updateUserList', function (users) {
 
+    var myNameIndex = users.indexOf(myName);
+    console.log('myNameIndex=' + myNameIndex);
+    users.splice(myNameIndex, 1);
+    users.unshift(myName);
+
     var ul = jQuery('<ul></ul>');
     users.forEach(function (user) {
         var li = jQuery('<li></li>');
@@ -81,12 +86,12 @@ socket.on('typingNotifyAll', function (message) {
 });
 
 function highlightUser(name) {
-    var userToHighlight = jQuery('#users li[data-name=' + name +']');
+    var userToHighlight = jQuery('#users li[data-name="' + name +'"]');
      userToHighlight.effect("highlight", {}, 2000);
 };
 
 function setTypingIndicator(name, onFlag) {
-    var userTypingImg = jQuery('#users li[data-name=' + name +'] img');
+    var userTypingImg = jQuery('#users li[data-name="' + name +'"] img');
     if (onFlag) {
         userTypingImg.css('visibility', 'visible');
     } else {
@@ -96,19 +101,17 @@ function setTypingIndicator(name, onFlag) {
 
 var messageInput = jQuery('#message-input');
 var messagePresent, messagePresentLast, messagePresenceChanged;
-messageInput.on('keyup', function(e) {
+messageInput.on('keyup change', function(e) {
     var messageInputVal = messageInput.val();
     messagePresent = messageInputVal ? true : false;
     messagePresenceChanged = messagePresentLast !== messagePresent ? true : false;
 
     if (messagePresent && messagePresenceChanged) {
-        // setTypingIndicator(myName, true);
         socket.emit('typingNotifyServer', {
             name: myName,
             show: true
         });
     } else if (messagePresenceChanged) {
-        // setTypingIndicator(myName, false);
         socket.emit('typingNotifyServer', {
             name: myName,
             show: false
@@ -123,11 +126,17 @@ jQuery('#message-form').on('submit', function (e) {
 
     var messageTextbox = jQuery('[name=message]');
 
+    socket.emit('typingNotifyServer', {
+        name: myName,
+        show: false
+    });
+
     socket.emit('createMessage', {
         text: messageTextbox.val()
     }, function () {
         messageTextbox.val('');
     });
+
 });
 
 var locationButton = jQuery('#send-location');

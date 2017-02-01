@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
 
         users.removeUser(socket.id);
         users.addUser(socket.id, params.name, params.room);
-        io.to(params.room).emit('updateUserList', users.getUserList(params.room, params.name));
+        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
 
         io.emit('updateActiveRoomsList', users.getActiveRoomsList());
         //io.emit('updateActiveRoomsList', ['This', 'That', 'The Other']);
