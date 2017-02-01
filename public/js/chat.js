@@ -1,5 +1,7 @@
 var socket = io();
 
+var myName;
+
 function scrollToBottom () {
     // Selectors
     var messages = jQuery('#messages');
@@ -18,6 +20,7 @@ function scrollToBottom () {
 
 socket.on('connect', function () {
     var params = jQuery.deparam(window.location.search);
+    myName = params.name;
     socket.emit('join', params, function (err) {
         if (err) {
             alert(err);
@@ -36,7 +39,11 @@ socket.on('updateUserList', function (users) {
 
     var ul = jQuery('<ul></ul>');
     users.forEach(function (user) {
-        ul.append(jQuery('<li></li>').text(user));
+        var li = jQuery('<li></li>');
+        li.attr('data-name', user);
+        li.append('<span>' + user + '</span>');
+        li.append('<img src="/svg/comment.svg" />');
+        ul.append(li);
     });
     jQuery('#users').html(ul);
 });
@@ -65,6 +72,43 @@ socket.on('newLocationMessage', function (message) {
 
     jQuery('#messages').append(html);
     scrollToBottom();
+});
+
+socket.on('typingNotifyAll', function (message) {
+    setTypingIndicator(message.name, message.show);
+});
+
+function setTypingIndicator(name, onFlag) {
+    var userTypingImg = jQuery('#users li[data-name=' + name +'] img');
+    if (onFlag) {
+        userTypingImg.css('visibility', 'visible');
+    } else {
+        userTypingImg.css('visibility', 'hidden');
+    }
+}
+
+var messageInput = jQuery('#message-input');
+var messagePresent, messagePresentLast, messagePresenceChanged;
+messageInput.on('keyup', function(e) {
+    var messageInputVal = messageInput.val();
+    messagePresent = messageInputVal ? true : false;
+    messagePresenceChanged = messagePresentLast !== messagePresent ? true : false;
+
+    if (messagePresent && messagePresenceChanged) {
+        // setTypingIndicator(myName, true);
+        socket.emit('typingNotifyServer', {
+            name: myName,
+            show: true
+        });
+    } else if (messagePresenceChanged) {
+        // setTypingIndicator(myName, false);
+        socket.emit('typingNotifyServer', {
+            name: myName,
+            show: false
+        });
+    }
+
+    messagePresentLast = messagePresent;
 });
 
 jQuery('#message-form').on('submit', function (e) {

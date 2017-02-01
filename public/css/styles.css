@@ -119,12 +119,19 @@ button:disabled {
   background: #e6eaee;
   border: 1px solid #e1e1e1;
   border-radius: 5px;
-  padding: 10px;
+  padding: 0 10px 0;
   margin: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .chat__sidebar li:first-child {
     margin-bottom: 30px;
+}
+
+.chat__sidebar li img {
+    visibility: hidden;
 }
 
 .chat__main {

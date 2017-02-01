@@ -45,6 +45,11 @@ io.on('connection', (socket) => {
         callback();
     });
 
+    socket.on('typingNotifyServer', (message, callback) => {
+        var user = users.getUser(socket.id);
+        io.to(user.room).emit('typingNotifyAll', message);
+    });
+
     socket.on('createMessage', (message, callback) => {
         var user = users.getUser(socket.id);
 
