@@ -175,8 +175,12 @@ button:disabled {
   padding: 10px;
 }
 
-.message {
-  padding: 10px;
+.message-with-user {
+  padding: 10px 10px 0 10px;
+}
+
+.message-without-user {
+  padding: 0 10px 0;
 }
 
 .message__title {

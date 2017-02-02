@@ -1,6 +1,6 @@
 var socket = io();
 
-var myName;
+var myName, lastMessageFrom;
 
 function scrollToBottom () {
     // Selectors
@@ -54,18 +54,30 @@ socket.on('updateUserList', function (users) {
 });
 
 socket.on('newMessage', function (message) {
-    var formattedTime = moment(message.createdAt).format('h:mm a');
-    var template = jQuery('#message-template').html();
-    var html = Mustache.render(template, {
-        from: message.from,
-        text: message.text,
-        createdAt: formattedTime
-    });
+
+    var html, template, formattedTime;
+
+    if (message.from !== lastMessageFrom) {
+        formattedTime = moment(message.createdAt).format('h:mm a');
+        template = jQuery('#message-template-with-user').html();
+        html = Mustache.render(template, {
+            from: message.from,
+            text: message.text,
+            createdAt: formattedTime
+        });
+    } else {
+        template = jQuery('#message-template-without-user').html();
+        html = Mustache.render(template, {
+            text: message.text,
+        });
+    }
 
     jQuery('#messages').append(html);
     scrollToBottom();
 
     highlightUser(message.from);
+
+    lastMessageFrom = message.from;
 });
 
 socket.on('newLocationMessage', function (message) {

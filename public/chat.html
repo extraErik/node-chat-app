@@ -29,12 +29,20 @@
         </div>
     </div>
 
-    <script id="message-template" type="text/template">
-        <li class="message">
+    <script id="message-template-with-user" type="text/template">
+        <li class="message-with-user">
             <div class="message__title">
                 <h4>{{from}}</h4>
                 <span>{{createdAt}}</span>
             </div>
+            <div class="message__body">
+                <p>{{text}}</p>
+            </div>
+        </li>
+    </script>
+
+    <script id="message-template-without-user" type="text/template">
+        <li class="message-without-user">
             <div class="message__body">
                 <p>{{text}}</p>
             </div>
