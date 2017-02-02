@@ -38,7 +38,6 @@ socket.on('disconnect', function () {
 socket.on('updateUserList', function (users) {
 
     var myNameIndex = users.indexOf(myName);
-    console.log('myNameIndex=' + myNameIndex);
     users.splice(myNameIndex, 1);
     users.unshift(myName);
 
@@ -110,7 +109,7 @@ socket.on('newLocationMessage', function (message) {
 });
 
 socket.on('typingNotifyAll', function (message) {
-    setTypingIndicator(message.name, message.show);
+    setTypingIndicator(message.name, message.show); // message from user says turn on indicator for given user
 });
 
 function highlightUser(name) {
@@ -118,35 +117,41 @@ function highlightUser(name) {
      userToHighlight.effect("highlight", {}, 2000);
 };
 
+var typingIndicators = {};
 function setTypingIndicator(name, onFlag) {
     var userTypingImg = jQuery('#users li[data-name="' + name +'"] img');
     if (onFlag) {
         userTypingImg.css('visibility', 'visible');
+        typingIndicators[name] = 'on';
     } else {
         userTypingImg.css('visibility', 'hidden');
+        typingIndicators[name] = null;
     }
 };
 
-var messageInput = jQuery('#message-input');
-var messagePresent, messagePresentLast, messagePresenceChanged;
-messageInput.on('keyup change', function(e) {
-    var messageInputVal = messageInput.val();
-    messagePresent = messageInputVal ? true : false;
-    messagePresenceChanged = messagePresentLast !== messagePresent ? true : false;
-
-    if (messagePresent && messagePresenceChanged) {
-        socket.emit('typingNotifyServer', {
-            name: myName,
-            show: true
-        });
-    } else if (messagePresenceChanged) {
-        socket.emit('typingNotifyServer', {
-            name: myName,
-            show: false
-        });
+var currentTime, diffSeconds;
+function typingMonitor() {
+    currentTime = new Date().getTime();
+    diffSeconds = (currentTime - timeOfLastKeystroke) / 1000;
+    if (diffSeconds > 10 && typingIndicators[myName]) {
+        socket.emit('typingNotifyServer', { name: myName, show: false }); // no typing in a while; need to turn off indicator
     }
+};
+setInterval(typingMonitor, 5000);
 
-    messagePresentLast = messagePresent;
+var messagePresent, timeOfLastKeystroke;
+var messageInput = jQuery('#message-input');
+messageInput.on('keyup change', function(e) {
+
+    timeOfLastKeystroke = new Date().getTime();
+
+    messagePresent = messageInput.val() ? true : false;
+
+    if (messagePresent && !typingIndicators[myName]) {
+        socket.emit('typingNotifyServer', { name: myName, show: true }); // typing, text present, need to turn on indicator
+    } else if (!messagePresent && typingIndicators[myName]) {
+        socket.emit('typingNotifyServer', { name: myName, show: false }); // typing, text deleted, need to turn off indicator
+    }
 });
 
 jQuery('#message-form').on('submit', function (e) {
@@ -154,16 +159,13 @@ jQuery('#message-form').on('submit', function (e) {
 
     var messageTextbox = jQuery('[name=message]');
 
-    socket.emit('typingNotifyServer', {
-        name: myName,
-        show: false
-    });
-
     socket.emit('createMessage', {
         text: messageTextbox.val()
     }, function () {
         messageTextbox.val('');
     });
+
+    socket.emit('typingNotifyServer', { name: myName, show: false }); // message just submitted, so turn off indicator
 
 });
 
