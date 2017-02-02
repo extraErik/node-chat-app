@@ -57,6 +57,7 @@ socket.on('newMessage', function (message) {
 
     var html, template, formattedTime;
 
+    // TODO: opportunity here for DRY...see newLocationMessage handler below...
     if (message.from !== lastMessageFrom) {
         formattedTime = moment(message.createdAt).format('h:mm a');
         template = jQuery('#message-template-with-user').html();
@@ -81,16 +82,31 @@ socket.on('newMessage', function (message) {
 });
 
 socket.on('newLocationMessage', function (message) {
-    var formattedTime = moment(message.createdAt).format('h:mm a');
-    var template = jQuery('#location-message-template').html();
-    var html = Mustache.render(template, {
-        from: message.from,
-        url: message.url,
-        createdAt: formattedTime
-    });
+
+    var html, template, formattedTime;
+
+    // TODO: opportunity here for DRY...see newMessage handler above...
+    if (message.from !== lastMessageFrom) {
+        formattedTime = moment(message.createdAt).format('h:mm a');
+        template = jQuery('#location-message-template-with-user').html();
+        html = Mustache.render(template, {
+            from: message.from,
+            url: message.url,
+            createdAt: formattedTime
+        });
+    } else {
+        template = jQuery('#location-message-template-without-user').html();
+        html = Mustache.render(template, {
+            url: message.url
+        });
+    }
 
     jQuery('#messages').append(html);
     scrollToBottom();
+
+    highlightUser(message.from);
+
+    lastMessageFrom = message.from;
 });
 
 socket.on('typingNotifyAll', function (message) {

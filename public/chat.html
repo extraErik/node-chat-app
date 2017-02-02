@@ -49,12 +49,22 @@
         </li>
     </script>
 
-    <script id="location-message-template" type="text/template">
-        <li class="message">
+    <script id="location-message-template-with-user" type="text/template">
+        <li class="message-with-user">
             <div class="message__title">
                 <h4>{{from}}</h4>
                 <span>{{createdAt}}</span>
             </div>
+            <div class="message__body">
+                <p>
+                    <a href="{{url}}" target="_blank">My current location</a>
+                </p>
+            </div>
+        </li>
+    </script>
+
+    <script id="location-message-template-without-user" type="text/template">
+        <li class="message-without-user">
             <div class="message__body">
                 <p>
                     <a href="{{url}}" target="_blank">My current location</a>
